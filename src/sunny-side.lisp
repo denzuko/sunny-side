@@ -2,23 +2,23 @@
 ;;;;
 ;;;; A minimal, pure-Lisp Gherkin engine: parses a .feature file and
 ;;;; turns each Scenario into an ordinary FiveAM test. No Ruby, no
-;;;; wire protocol, no subprocess — the .feature file stays the
+;;;; wire protocol, no subprocess. The .feature file stays the
 ;;;; human- and LLM-readable spec, and is also the thing that
 ;;;; actually runs, not just documentation alongside a separately
 ;;;; hand-written test suite.
 ;;;;
 ;;;; Sunny-side because a happy-path scenario is already called a
-;;;; "sunny day scenario" in QA — the name means something to a
+;;;; "sunny day scenario" in QA; the name means something to a
 ;;;; stranger who's never heard the diner story.
 ;;;;
 ;;;; Supported subset: Feature, Background, Scenario, and
 ;;;; Given/When/Then/And/But steps, with #-comments and blank lines
 ;;;; ignored. NOT supported: Scenario Outline/Examples tables, data
-;;;; tables, doc strings, and tags — extending any of those means
+;;;; tables, doc strings, and tags. Extending any of those means
 ;;;; extending the parser, not a configuration change.
 ;;;;
 ;;;; Untested in this environment (no SBCL/Quicklisp available here
-;;;; to run it) — but every symbol in this file is code this project
+;;;; to run it), but every symbol in this file is code this project
 ;;;; owns, not a guess at a third-party library's API surface, so the
 ;;;; risk profile is materially lower than, say, the clucumber
 ;;;; integration this replaced. Still worth an actual run before
@@ -45,7 +45,7 @@
 
 (defvar *steps* nil
   "Alist of (REGEX . FUNCTION), oldest registration first. A step's
-text is matched against these regexes in registration order — the
+text is matched against these regexes in registration order. The
 first match wins, exactly like Cucumber's own step matching. The
 Given/When/Then/And/But keyword a step is written under in the
 .feature file is cosmetic; matching is by regex text alone, same as
@@ -58,7 +58,7 @@ groups in REGEX are passed to FUNCTION as positional string arguments."
 
 (defmacro define-step-keyword (name)
   "Defines a step-registration macro NAME (Given/When/Then/And/But)
-that all do the same thing — register a step under a regex — so the
+that all do the same thing (register a step under a regex), so the
 Lisp code reads the same as the .feature file it implements."
   `(defmacro ,name (regex (&rest capture-vars) &body body)
      `(register-step ,regex (lambda (,@capture-vars) ,@body))))
@@ -105,7 +105,7 @@ leading Given/When/Then/And/But keyword already stripped."
 
 (defun parse-feature (pathname)
   "Parses PATHNAME's Feature/Background/Scenario/step structure.
-Returns (VALUES BACKGROUND-STEPS SCENARIOS) — BACKGROUND-STEPS is a
+Returns (VALUES BACKGROUND-STEPS SCENARIOS). BACKGROUND-STEPS is a
 list of step-text strings run before every scenario; SCENARIOS is a
 list of FEATURE-SCENARIO, in file order."
   (let ((background nil)
