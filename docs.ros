@@ -9,7 +9,7 @@ exec ros -- $0 "$@"
 (let ((root (uiop:pathname-directory-pathname *load-pathname*)))
   (push root asdf:*central-registry*))
 
-(asdf:load-system :sunny-side/docs :verbose nil)
+(ql:quickload :sunny-side/docs :verbose nil)
 
 (defun main (&rest argv)
   "Renders sunny-side's manual to standard output."

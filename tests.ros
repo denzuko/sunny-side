@@ -9,7 +9,7 @@ exec ros -- $0 "$@"
 (let ((root (uiop:pathname-directory-pathname *load-pathname*)))
   (push root asdf:*central-registry*))
 
-(asdf:load-system :sunny-side/tests :verbose nil)
+(ql:quickload :sunny-side/tests :verbose nil)
 
 (defun main (&rest argv)
   "Runs sunny-side's own smoke-test suite and exits 0 on success, 1
