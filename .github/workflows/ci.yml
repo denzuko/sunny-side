@@ -22,7 +22,7 @@ jobs:
           echo "$HOME/.roswell/bin" >> "$GITHUB_PATH"
 
       - name: Run smoke-test suite
-        run: ros -e '(ql:quickload :sunny-side/tests :verbose nil)' -e '(uiop:quit (if (sunny-side/tests:run-tests) 0 1))'
+        run: ./tests.ros
 
   docs:
     runs-on: ubuntu-latest
@@ -39,4 +39,4 @@ jobs:
           echo "$HOME/.roswell/bin" >> "$GITHUB_PATH"
 
       - name: Confirm the manual renders
-        run: ros -e '(ql:quickload :sunny-side/docs :verbose nil)' -e '(sunny-side/docs:generate)' -e '(uiop:quit 0)'
+        run: ./docs.ros
