@@ -38,13 +38,13 @@ purpose, with no separate configuration surface.
 
 ```lisp
 ;; steps.lisp
-(sunny-side:Given "^a fresh counter$" ()
+(sunny-side:Given! "^a fresh counter$" ()
   (setf *count* 0))
 
-(sunny-side:When "^I increment it$" ()
+(sunny-side:When! "^I increment it$" ()
   (incf *count*))
 
-(sunny-side:Then "^the count should be (\\d+)$" (expected)
+(sunny-side:Then! "^the count should be (\\d+)$" (expected)
   (fiveam:is (= (parse-integer expected) *count*)))
 
 (sunny-side:define-feature-tests

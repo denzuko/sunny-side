@@ -26,11 +26,11 @@
 
 (defpackage :sunny-side
   (:use :cl)
-  (:export #:Given
-           #:When
-           #:Then
-           #:And
-           #:But
+  (:export #:Given!
+           #:When!
+           #:Then!
+           #:And!
+           #:But!
            #:register-step
            #:find-and-run-step
            #:parse-feature
@@ -57,17 +57,21 @@ groups in REGEX are passed to FUNCTION as positional string arguments."
   (setf *steps* (append *steps* (list (cons regex function)))))
 
 (defmacro define-step-keyword (name)
-  "Defines a step-registration macro NAME (Given/When/Then/And/But)
+  "Defines a step-registration macro NAME (Given!/When!/Then!/And!/But!)
 that all do the same thing (register a step under a regex), so the
-Lisp code reads the same as the .feature file it implements."
+Lisp code reads the same as the .feature file it implements. The
+trailing ! marks these as side-effecting forms (they register into
+*STEPS*), and avoids colliding with standard CL symbols: bare WHEN
+and AND are CL:WHEN and CL:AND, which this package still needs for
+its own ordinary conditionals below."
   `(defmacro ,name (regex (&rest capture-vars) &body body)
      `(register-step ,regex (lambda (,@capture-vars) ,@body))))
 
-(define-step-keyword Given)
-(define-step-keyword When)
-(define-step-keyword Then)
-(define-step-keyword And)
-(define-step-keyword But)
+(define-step-keyword Given!)
+(define-step-keyword When!)
+(define-step-keyword Then!)
+(define-step-keyword And!)
+(define-step-keyword But!)
 
 (defun find-and-run-step (step-text)
   "Finds the first registered step regex matching STEP-TEXT and calls

@@ -12,6 +12,6 @@
 (asdf:defsystem "sunny-side/docs"
   :description "40ants-doc manual definition for sunny-side."
   :license "BSD-3-Clause"
-  :depends-on ("sunny-side" "40ants-doc")
+  :depends-on ("sunny-side" "40ants-doc" "40ants-doc-full")
   :pathname "src/"
   :components ((:file "docs")))
