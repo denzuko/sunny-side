@@ -15,3 +15,10 @@
   :depends-on ("sunny-side" "40ants-doc" "40ants-doc-full")
   :pathname "src/"
   :components ((:file "docs")))
+
+(asdf:defsystem "sunny-side/tests"
+  :description "FiveAM smoke-test suite for sunny-side's own engine, using a self-contained counter.feature."
+  :license "BSD-3-Clause"
+  :depends-on ("sunny-side" "fiveam")
+  :pathname "t/"
+  :components ((:file "test")))

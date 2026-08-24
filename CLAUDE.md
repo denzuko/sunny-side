@@ -1,12 +1,14 @@
 # CLAUDE.md
 
-Hand-authored. `.github/workflows/ci.yml` invokes
-`denzuko/dps-meta@v1` (`type: lisp-actor`) on GitHub's own runners.
-The first run failed (`git config meta.application is not set`)
-because git config set locally in the scaffolding environment never
-reaches a fresh CI checkout; the workflow now sets those keys as a CI
-step directly. This file should still be treated as a placeholder
-until a successful Action run regenerates it for real.
+Hand-authored. `denzuko/dps-meta@v1` was tried as the CI-driven
+generator for this file but has a confirmed upstream bug. Its
+"Checkout dps-meta source" step fetches a `v4` ref that doesn't exist
+in that repo, failing unconditionally for every consumer regardless
+of configuration. `.github/workflows/ci.yml` runs real, working CI
+instead (smoke-test suite, docs build) via a plain Roswell/qlot
+install, matching `denzuko/edm-engine`'s proven pattern. This file
+remains a hand-authored placeholder; regenerate via `dps-meta` once
+its upstream bug is fixed, or hand-maintain it going forward.
 
 ## Project Identity
 
@@ -29,9 +31,12 @@ until a successful Action run regenerates it for real.
 
 ## BDD Workflow
 
-Dogfoods itself once a consuming project exercises it against its own
-`.feature` file. See `denzuko/bknr.hashkv`'s `bdd.ros` for the
-reference usage. This repo has no `.feature` file of its own yet.
+`t/counter.feature` + `t/test.lisp` (system `sunny-side/tests`) is a
+self-contained smoke test: a tiny counter feature, parsed and run as
+real FiveAM tests through `define-feature-tests`, dogfooding the
+engine on its own repo, not just through consumers. Also dogfoods via
+consuming projects' own `.feature` files, starting with
+`denzuko/bknr.hashkv`'s `bdd.ros`.
 
 ## Subcommands
 

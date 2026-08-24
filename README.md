@@ -71,6 +71,15 @@ Renders `@SUNNY-SIDE-MANUAL` (defined in `src/docs.lisp`) via
 `40ants-doc:document` have changed across that library's history.
 Confirm the current signature locally before wiring this into CI.
 
+## Testing
+
+```sh
+ros -e '(ql:quickload :sunny-side/tests)' -e '(sunny-side/tests:run-tests)'
+```
+
+A self-contained smoke test (`t/counter.feature`): dogfoods the
+engine on its own repo, not just through consumers.
+
 ## Status
 
 Extracted from `denzuko/bknr.hashkv`, where it was the BDD layer for
