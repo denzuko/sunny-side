@@ -9,7 +9,7 @@ sitting next to a separately maintained test suite.
 ## Naming
 
 A happy-path scenario is already called a "sunny day scenario" in QA.
-That's the whole name. (There's a diner-themed origin story involving
+That is the whole name. (There is a diner-themed origin story involving
 gherkins on a plate with a burger and fries at 5am, if you ask, but
 the name should mean something to a stranger who's never heard it.)
 
@@ -17,7 +17,7 @@ the name should mean something to a stranger who's never heard it.)
 
 `antifuchs/clucumber` implements only the Lisp side of the Cucumber
 wire protocol. Something still has to parse `.feature` files and
-drive it over a socket, and that's the Ruby `cucumber` gem itself,
+drive it over a socket, and that is the Ruby `cucumber` gem itself,
 not an optional add-on. That means a second language toolchain
 (`Gemfile`, `bundle install`, a Ruby subprocess) just to run tests for
 a Lisp project. `sunny-side` trades real Cucumber-tooling
@@ -78,7 +78,7 @@ ros -e '(ql:quickload :sunny-side/tests)' -e '(sunny-side/tests:run-tests)'
 ```
 
 A self-contained smoke test (`t/counter.feature`): dogfoods the
-engine on its own repo, not just through consumers.
+engine on its own repo as well as through consumers.
 
 ## Status
 
@@ -87,7 +87,7 @@ that project's own `.feature` file before being split out as its own
 repo. `bknr.hashkv` is the reference consumer.
 
 Untested in the environment this was written in: no SBCL/Quicklisp
-available to actually run it. Every symbol here is code this project
+available to run it. Every symbol here is code this project
 owns rather than a guess at a third-party API, which is a materially
 lower risk profile than the clucumber integration this replaced, but
 it still deserves a real run before being trusted in CI.

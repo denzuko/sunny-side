@@ -2,7 +2,7 @@
 
 Hand-authored. `denzuko/dps-meta@v1` was tried as the CI-driven
 generator for this file but has a confirmed upstream bug. Its
-"Checkout dps-meta source" step fetches a `v4` ref that doesn't exist
+"Checkout dps-meta source" step fetches a `v4` ref that does not exist
 in that repo, failing unconditionally for every consumer regardless
 of configuration. `.github/workflows/ci.yml` runs real, working CI
 instead (smoke-test suite, docs build) via a plain Roswell/qlot
@@ -34,7 +34,7 @@ its upstream bug is fixed, or hand-maintain it going forward.
 `t/counter.feature` + `t/test.lisp` (system `sunny-side/tests`) is a
 self-contained smoke test: a tiny counter feature, parsed and run as
 real FiveAM tests through `define-feature-tests`, dogfooding the
-engine on its own repo, not just through consumers. Also dogfoods via
+engine on its own repo as well as through consumers. Also dogfoods via
 consuming projects' own `.feature` files, starting with
 `denzuko/bknr.hashkv`'s `bdd.ros`.
 

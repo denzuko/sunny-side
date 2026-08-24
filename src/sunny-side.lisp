@@ -4,8 +4,8 @@
 ;;;; turns each Scenario into an ordinary FiveAM test. No Ruby, no
 ;;;; wire protocol, no subprocess. The .feature file stays the
 ;;;; human- and LLM-readable spec, and is also the thing that
-;;;; actually runs, not just documentation alongside a separately
-;;;; hand-written test suite.
+;;;; runs, not documentation alongside a separately hand-written
+;;;; test suite.
 ;;;;
 ;;;; Sunny-side because a happy-path scenario is already called a
 ;;;; "sunny day scenario" in QA; the name means something to a
@@ -158,7 +158,7 @@ list of FEATURE-SCENARIO, in file order."
   "Parses FEATURE-PATHNAME at macroexpansion time and defines one
 FiveAM test per Scenario, each running its Background steps (if any)
 followed by its own steps through FIND-AND-RUN-STEP. Defines SUITE via
-FIVEAM:DEF-SUITE if it doesn't already exist in this package."
+FIVEAM:DEF-SUITE if it does not already exist in this package."
   (multiple-value-bind (background scenarios) (parse-feature feature-pathname)
     `(progn
        (fiveam:def-suite ,suite :description ,(format nil "Gherkin scenarios from ~A" feature-pathname))
