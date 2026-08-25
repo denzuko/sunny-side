@@ -15,6 +15,23 @@ story involving gherkins on a plate with a burger and fries at 5am
 exists too, for anyone who asks, but the name needed to mean
 something to a stranger who had never heard it.)
 
+## Depending on sunny-side from your own project
+
+`sunny-side` is not yet published to Quicklisp or Ultralisp, so add
+it to your own project's `qlfile` as a git source. `sunny-side`
+depends only on `fiveam` and `cl-ppcre`, ordinary published Quicklisp
+packages, so this one line is the only entry needed, even for a
+project that has nothing to do with `bknr.hashkv`:
+
+```
+git sunny-side https://github.com/denzuko/sunny-side.git :branch develop
+```
+
+```sh
+qlot install
+qlot exec ros -e '(ql:quickload :sunny-side)'
+```
+
 ## Why this exists instead of a Cucumber wire-protocol client
 
 `antifuchs/clucumber` implements only the Lisp side of the Cucumber
