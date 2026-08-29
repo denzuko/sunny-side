@@ -2,12 +2,13 @@ name: CI
 
 on:
   workflow_dispatch:
+
   push:
     branches: [develop]
+    tags: ['\d\+.\d\+.\d\+']
   pull_request:
     branches: [develop]
 
-# Prevents redundant simultaneous builds on the same branch
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -16,45 +17,48 @@ jobs:
   runner:
     name: "Runner ${{ matrix.environment }}"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       OS: "ubuntu-latest"
-      QUICKLISP_DIST": "quicklisp"
-      LISP": "sbcl-bin"
+      QUICKLISP_DIST: "quicklisp"
+      LISP: "sbcl-bin"
     strategy:
-      max-parallel: 1
+      max-parallel: 2
       fail-fast: true
       matrix:
         environment: ["tests", "docs"]
     steps:
       - uses: actions/checkout@v4
       - uses: 40ants/setup-lisp@v4
+        with:
+          asdf-system: ${{ github.event.repository.name }}
+          qlfile-or-path: 'qlfile'
+          
+      - name: Bundle Quicklisp Dependencies Locally
+        run: qlot bundle
       
       - name: "Deploy ${{ matrix.environment }} steps"
         run: ./${{matrix.environment}}.ros
-
-  build-docs:
-    env:
-      OS: "ubuntu-latest"
-      QUICKLISP_DIST": "quicklisp"
-      LISP": "sbcl-bin"
-    name: 'Build & Deploy Docs'
-    needs: runner
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'ref/heads/devlop'
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Common Lisp & Qlot
-        uses: 40ants/setup-lisp@v4
-        with:
-            asdf-system: sunny-side
-        
-      - name: Build & Publish HTML Docs
+   
+      - name: Publish HTML Docs to gh pages
+        if: matrix.environment == 'docs'
+        background: true
         uses: 40ants/build-docs@v1
         with:
-            asdf-system: sunny-side
+          asdf-system: sunny-side
+
+      - name: "Release source code to github"
+        if: github.ref_type == 'tag'
+        run: |
+          tar -czvf ${{github.event.repository.name}}-${{github.event.ref}}.tgz \
+            --exclude='.git' \
+            --exclude='.github' .
+          sha256sum ${{github.event.repository.name}}-${{github.event.ref}}.tgz > checksum.txt
+      - name: Upload Source Bundle to GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+           ${{github.event.repository.name}}-${{github.event.ref}}.tgz
+           checksum.txt
