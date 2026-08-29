@@ -7,10 +7,19 @@ on:
   pull_request:
     branches: [develop]
 
+# Prevents redundant simultaneous builds on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   runner:
     name: "Runner ${{ matrix.environment }}"
     runs-on: ubuntu-latest
+    env:
+      OS: "ubuntu-latest"
+      QUICKLISP_DIST": "quicklisp"
+      LISP": "sbcl-bin"
     strategy:
       max-parallel: 1
       fail-fast: true
@@ -22,3 +31,30 @@ jobs:
       
       - name: "Deploy ${{ matrix.environment }} steps"
         run: ./${{matrix.environment}}.ros
+
+  build-docs:
+    env:
+      OS: "ubuntu-latest"
+      QUICKLISP_DIST": "quicklisp"
+      LISP": "sbcl-bin"
+    name: 'Build & Deploy Docs'
+    needs: runner
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'ref/heads/devlop'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Common Lisp & Qlot
+        uses: 40ants/setup-lisp@v4
+        with:
+            asdf-system: sunny-side
+        
+      - name: Build & Publish HTML Docs
+        uses: 40ants/build-docs@v1
+        with:
+            asdf-system: sunny-side
