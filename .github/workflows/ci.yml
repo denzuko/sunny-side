@@ -44,8 +44,7 @@ jobs:
         if: github.ref_type != 'tag' && matrix.environment == 'docs'
         uses: 40ants/build-docs@v1
         with:
-          asdf-system: sunny-side
-
+          asdf-system: "${{ github.event.repository.name }}/docs"
       - name: "Release source code to github"
         if: github.ref_type == 'tag'
         run: |
