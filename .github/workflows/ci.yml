@@ -2,10 +2,9 @@ name: CI
 
 on:
   workflow_dispatch:
-
   push:
     branches: [develop]
-    tags: ['\d\+.\d\+.\d\+']
+    tags: ['[0-9]+.[0-9]+.[0-9]+']
   pull_request:
     branches: [develop]
 
@@ -30,20 +29,19 @@ jobs:
         environment: ["tests", "docs"]
     steps:
       - uses: actions/checkout@v4
+
       - uses: 40ants/setup-lisp@v4
         with:
           asdf-system: ${{ github.event.repository.name }}
           qlfile-or-path: 'qlfile'
-          
-      - name: Bundle Quicklisp Dependencies Locally
-        run: qlot bundle
+          qlot-version: 'v1.8.4'
       
       - name: "Deploy ${{ matrix.environment }} steps"
+        if: github.ref_type != 'tag'
         run: ./${{matrix.environment}}.ros
    
       - name: Publish HTML Docs to gh pages
-        if: matrix.environment == 'docs'
-        background: true
+        if: github.ref_type != 'tag' && matrix.environment == 'docs'
         uses: 40ants/build-docs@v1
         with:
           asdf-system: sunny-side
@@ -51,14 +49,16 @@ jobs:
       - name: "Release source code to github"
         if: github.ref_type == 'tag'
         run: |
-          tar -czvf ${{github.event.repository.name}}-${{github.event.ref}}.tgz \
+          CLEAN_REF=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9.-]/_/g')
+          tar -czvf ${{ github.event.repository.name }}-${CLEAN_REF}.tgz \
             --exclude='.git' \
             --exclude='.github' .
-          sha256sum ${{github.event.repository.name}}-${{github.event.ref}}.tgz > checksum.txt
+          sha256sum ${{ github.event.repository.name }}-${CLEAN_REF}.tgz > checksum.txt
+
       - name: Upload Source Bundle to GitHub Release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
           files: |
-           ${{github.event.repository.name}}-${{github.event.ref}}.tgz
-           checksum.txt
+            ${{ github.event.repository.name }}-*.tgz
+            checksum.txt
