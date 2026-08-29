@@ -30,6 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Secret Scanning (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2.3.4
+
       - name: Cache Qlot & Roswell Dependencies
         uses: actions/cache@v4
         with:
