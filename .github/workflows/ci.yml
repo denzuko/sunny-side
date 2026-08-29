@@ -1,42 +1,24 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [develop]
   pull_request:
     branches: [develop]
 
 jobs:
-  test:
+  runner:
+    name: "Runner ${{ matrix.environment }}"
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      fail-fast: true
+      matrix:
+        environment: ["tests", "docs"]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Roswell, sbcl-bin, qlot
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libacl1-dev libcap-dev sudo python3
-          which ros || (curl -sL https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb -o /tmp/roswell.deb && sudo dpkg -i /tmp/roswell.deb)
-          ros install sbcl-bin
-          ros install qlot
-          echo "$HOME/.roswell/bin" >> "$GITHUB_PATH"
-
-      - name: Run smoke-test suite
-        run: ./tests.ros
-
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Roswell, sbcl-bin, qlot
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libacl1-dev libcap-dev sudo python3
-          which ros || (curl -sL https://github.com/roswell/roswell/releases/download/v23.10.14.114/roswell_23.10.14.114-1_amd64.deb -o /tmp/roswell.deb && sudo dpkg -i /tmp/roswell.deb)
-          ros install sbcl-bin
-          ros install qlot
-          echo "$HOME/.roswell/bin" >> "$GITHUB_PATH"
-
-      - name: Confirm the manual renders
-        run: ./docs.ros
+      - uses: 40ants/setup-lisp@v4
+      
+      - name: "Deploy ${{ matrix.environment }} steps"
+        run: ./${{matrix.environment}}.ros
