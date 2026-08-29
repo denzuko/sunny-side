@@ -35,6 +35,21 @@ jobs:
           asdf-system: ${{ github.event.repository.name }}
           qlfile-or-path: 'qlfile'
           qlot-version: 'v1.8.4'
+
+      - name: Cache Qlot & Roswell Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .qlot
+            ~/.roswell
+            ~/.cache/common-lisp
+          key: ${{ runner.os }}-qlot-${{ hashFiles('qlfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-qlot-
+
+      - name: Install Dependencies
+        run: |
+          qlot bundle
       
       - name: "Deploy ${{ matrix.environment }} steps"
         if: github.ref_type != 'tag'
